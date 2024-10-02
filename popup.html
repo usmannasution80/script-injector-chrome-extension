@@ -11,6 +11,9 @@
       <button toggle="tab" target="edit" class="btn btn-primary">
         NEW
       </button>
+      <button toggle="tab" target="backup" class="btn btn-primary">
+        Backup
+      </button>
       <ul></ul>
     </div>
     <div class="tabs" tab="edit">
@@ -34,6 +37,21 @@
       </button>
       <button name="save" class="btn btn-primary">
         Save
+      </button>
+    </div>
+    <div class="tabs" tab="backup">
+      <button toggle="tab" target="list" class="btn btn-primary">
+        Back to list
+      </button>
+      <br/>
+      <a class="btn btn-primary" download="backup.json">
+        Download Backup
+      </a>
+      <div class="form-group py-2">
+        <input type="file" class="form-control"/>
+      </div>
+      <button name="upload" class="btn btn-primary">
+        Upload Backup
       </button>
     </div>
     <script src="js/popup.js"></script>

@@ -14,6 +14,9 @@
         case 'edit':
           setEditTab();
           break;
+        case 'backup':
+          setBackupTab();
+          break;
         default:
           editIndex = -1;
           refreshList();
@@ -56,6 +59,28 @@
         editTab.querySelector('[name="script"]').value = script;
 
       });
+    }
+  };
+
+  const setBackupTab = () => {
+    let backupTab = document.querySelector('[tab="backup"]');
+    chrome.storage.local.get('scripts', items => {
+      if(!items.scripts) return;
+      backupTab.querySelector('a').setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(JSON.stringify(items.scripts)));
+    });
+    backupTab.querySelector('[name="upload"]').onclick = e => {
+      let file = backupTab.querySelector('input').files[0];
+      let reader = new FileReader();
+      reader.readAsText(file, 'UTF-8');
+      reader.onload = e => chrome.storage.local.get('scripts', items => {
+        let scripts = items.scripts || [];
+        scripts = [...scripts, ...JSON.parse(e.target.result)];
+        chrome.storage.local.set({scripts}, () => {
+          refreshList();
+          toggleTab('list');
+        });
+      });
+      reader.onerror = e => alert('failed!');
     }
   };
 
