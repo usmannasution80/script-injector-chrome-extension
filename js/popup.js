@@ -1,6 +1,6 @@
 (() => {
 
-  let editIndex = null;
+  let editIndex = -1;
 
   const toggleTab = tab => {
     let tabElements = document.querySelectorAll('[tab]');
@@ -15,14 +15,32 @@
           setEditTab();
           break;
         default:
-          editIndex = null;
+          editIndex = -1;
           refreshList();
       }
     }
   };
 
+  const deleteScript = index => {
+    chrome.storage.local.get('scripts', items => {
+      if(!items.scripts) return;
+      let scripts = items.scripts.filter((current, idx, arr) => index !== idx);
+      chrome.storage.local.set({scripts}, () => {
+        refreshList();
+        toggleTab('list');
+      })
+    });
+  }
+
   const setEditTab = () => {
-    if(editIndex){
+    let editTab = document.querySelector('[tab="edit"]');
+    let deleteButton = editTab.querySelector('[name="delete"]');
+    deleteButton.style.display = 'none';
+    if(editIndex > -1){
+
+      deleteButton.style.display = 'inline-block';
+      deleteButton.onclick = e => deleteScript(editIndex);
+
       chrome.storage.local.get('scripts', items => {
 
         if(!items.scripts) return;
@@ -33,10 +51,8 @@
           script
         } = items.scripts[editIndex];
 
-        let editTab = document.querySelector('[tab="edit"]');
-
         editTab.querySelector('[name="regex"]').value = regex;
-        editTab.querySelector('[name="regex_flags"]').value = regex_flags;
+        editTab.querySelector('[name="regex_flags"]').value = regexFlags;
         editTab.querySelector('[name="script"]').value = script;
 
       });
@@ -59,7 +75,7 @@
       let listContentElements = listElement.getElementsByTagName('li');
       for(let i in listContentElements){
         listContentElements[i].onclick = e => {
-          editIndex = i;
+          editIndex = parseInt(i);
           toggleTab('edit');
         };
       }
@@ -81,7 +97,7 @@
         regexFlags : editTab.querySelector('[name="regex_flags"]').value,
         script : editTab.querySelector('[name="script"]').value
       };
-      if(editIndex) scripts[editIndex] = script;
+      if(editIndex > -1) scripts[editIndex] = script;
       else scripts.push(script);
       chrome.storage.local.set({scripts}, () => {
         refreshList();
