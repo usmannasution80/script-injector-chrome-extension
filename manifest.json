@@ -1,18 +1,26 @@
 {
-  "manifest_version" : 3,
+  "manifest_version" : 2,
   "name" : "Script Injector",
   "version" : "1.0.0",
   "permissions" : [
     "storage",
-    "unlimitedStorage"
+    "unlimitedStorage",
+    "webRequest",
+    "webRequestBlocking",
+    "<all_urls>"
   ],
-  "action" : {
+  "browser_action" : {
     "default_popup" : "popup.html"
+  },
+  "background" : {
+    "scripts" : [
+      "js/background.js"
+    ]
   },
   "content_scripts" : [
     {
       "matches" : ["*://*/*"],
-      "js" : ["content_scripts.js"]
+      "js" : ["js/content_script.js"]
     }
   ]
 }
