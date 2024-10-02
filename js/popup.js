@@ -61,6 +61,10 @@
 
   const refreshList = () => {
 
+    let editTabInputs = document.querySelector('[tab="edit"]').querySelectorAll('input, textarea');
+    for(let input of editTabInputs)
+      input.value = '';
+
     chrome.storage.local.get('scripts', items => {
       let scripts = items.scripts || [];
       let listTab = document.querySelector('[tab="list"]');
